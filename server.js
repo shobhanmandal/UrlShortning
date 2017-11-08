@@ -64,7 +64,7 @@ app.post('/login', (req, res) => {
 
         req.session.user_id = req.body.username;
         result=req.session;
-        res.render('index',{id:req.body.username,port:app.get('port'),url:url});
+        res.render('index',{id:req.body.username,url:url});
 
         }else {
          res.sendFile(__dirname + '/pages/errorLogin.html')
