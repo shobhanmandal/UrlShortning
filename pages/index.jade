@@ -52,7 +52,9 @@ head
       }
        
     script.
-      var primaryUrl="http://localhost:30000";
+      var port=#{port};
+      var primaryUrl="http://localhost:"+port;
+
       google.charts.load('current', {'packages':['corechart']});
       $( document ).ready(function() {
       $('#userID').val("#{id}");

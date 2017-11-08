@@ -18,10 +18,13 @@ var path=require('path');
 app.set('views', path.join(__dirname, 'pages'));
 app.set('view engine', 'jade');
 app.set('port', (process.env.PORT || 30000));
+//console.log(process.env);
+//app.listen('port',(process.env.PORT || 30000))
 app.use(express.static(__dirname + '/images/'));
 
-app.listen(30000, function() {
-  console.log('listening on 30000')
+app.listen(app.get('port'), function() {
+  console.log('listening on')
+  console.log(app.get('port'))
 })
 
 
@@ -47,7 +50,7 @@ app.post('/login', (req, res) => {
    if (err) {
      return console.log('Unable to connect to MongoDB server');
    }
-   console.log('Connected to MongoDB server...');
+   console.log('Connected to MongoDB server... @ login');
 
      var insertResult,sendingResult;
 
@@ -60,7 +63,7 @@ app.post('/login', (req, res) => {
 
         req.session.user_id = req.body.username;
         result=req.session;
-        res.render('index',{id:req.body.username});
+        res.render('index',{id:req.body.username,port:app.get('port')});
 
         }else {
          res.sendFile(__dirname + '/pages/errorLogin.html')
@@ -91,7 +94,7 @@ app.post('/register', (req, res) => {
      if (err) {
        return console.log('Unable to connect to MongoDB server');
      }
-     console.log('Connected to MongoDB server...');
+     console.log('Connected to MongoDB server... @ register');
 
        var insertResult,sendingResult;
 
@@ -103,7 +106,8 @@ app.post('/register', (req, res) => {
          console.log("Registered");
          req.session.user_id = req.body.username;
          result=req.session;
-         res.render('index',{id:req.body.username});
+         console.log(app.get('port'));
+         res.render('index',{id:req.body.username,port:app.get('port')});
 
        }
       db.close();
@@ -141,7 +145,7 @@ function getID(){
 	  if (err) {
 	    return console.log('Unable to connect to MongoDB server');
 	  }
-	  console.log('Connected to MongoDB server...');
+	  console.log('Connected to MongoDB server... @ getID');
 
 	  var temp;
 	  while(true)
