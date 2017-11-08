@@ -53,7 +53,8 @@ head
        
     script.
       var port=#{port};
-      var primaryUrl="http://localhost:"+port;
+      var address=#{url};
+      var primaryUrl=url+port;
 
       google.charts.load('current', {'packages':['corechart']});
       $( document ).ready(function() {

@@ -6,7 +6,7 @@ const MongoClient = require('mongodb').MongoClient;
 const app = express();
 const mongodb = require('mongodb');
 const session = require('express-session');
-
+const url="tranquil-bastion-40055.herokuapp.com";
 // handles URL encoded bodies
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(session({
@@ -28,7 +28,8 @@ app.listen(app.get('port'), function() {
 })
 
 
-const database_URL="mongodb://localhost:27017/URL_Shortning_Database"; 
+//const database_URL="mongodb://localhost:27017/URL_Shortning_Database"; 
+const database_URL="mongodb://urlshortner:urlshortner@ds149535.mlab.com:49535/url_shortning_database"; 
 /*app.get('/', function(req, res) {
   res.send('Hello World')
 })*/
@@ -63,7 +64,7 @@ app.post('/login', (req, res) => {
 
         req.session.user_id = req.body.username;
         result=req.session;
-        res.render('index',{id:req.body.username,port:app.get('port')});
+        res.render('index',{id:req.body.username,port:app.get('port'),url:url});
 
         }else {
          res.sendFile(__dirname + '/pages/errorLogin.html')
