@@ -55,7 +55,7 @@ head
       var port=#{port};
       var address="#{url}";
       var primaryUrl=address+port;
-
+      console.log(primaryUrl);
       google.charts.load('current', {'packages':['corechart']});
       $( document ).ready(function() {
       $('#userID').val("#{id}");
