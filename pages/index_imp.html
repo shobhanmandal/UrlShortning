@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>URL Shortener</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <style media="screen">
+  .urlTab {
+    table-layout:fixed;
+    width: 100%;
+    text-align: center;
+  }
+  .urlTab td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap:break-word;
+  }
+  .navbar-brand {
+    padding: 0px;
+  }
+  .navbar-brand>img {
+    height: 100%;
+    display:contents;
+    width: auto;
+  }
+  .navbar {
+    background-color: black;
+    border: none
+  }
+  #navbar3 {
+    color: #FDFCFC;
+    font-size: 20px
+  }
+
+  </style>
+
+  <script>
+    $( document ).ready(function() {
+	    $('#userID').val('a1');
+	   // alert($('#userID').val());
+	});
+
+    // var userID="a1";
+    
+    function insertURL(){
+        //alert($('#userID').val());
+        var data = {longUrl: $('#longUrl').val(),
+                      userID: $('#userID').val()};
+                    //  userID=userID};
+
+        console.log("Sending: "+data.longUrl+":"+data.userID);
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:30000/urlCaller",
+          data: data,
+          success:  ( res )=> {
+          //$( "#result" ).text( JSON.stringify(res) )
+          //console.log(res);
+          var jsonObj = JSON.parse(res);
+          console.log("Printing Data::"+jsonObj[0].mainUrl+" :"+jsonObj[0].shortUrl+" :");//+" :"+thumbnail+" :"+title);
+          
+          //tData="<tr><td><b>Main Url</b></td><td><a href=\""+jsonObj[0].mainUrl+"\" target=\"_blank\">"+jsonObj[0].mainUrl+"</a></td></tr>";
+
+          //var tData="<tr><td><b>Short Url</b></td><td><a href=\""+jsonObj[0].shortUrl+"\" target=\"_blank\">"+jsonObj[0].shortUrl+"</a></td></tr>";
+          $("#longUrl").val("localhost:30000/"+jsonObj[0].shortUrl);
+          // $("#t1 tr").remove();
+          // $("#t1").append(tData); 
+          
+          $("#s1").empty();
+          $("#s1").append("<option value=\"\">All</option>"); 
+
+          $("#t2 tr").remove();
+          //$("#t2").append("<thead><td>Main Url</td><td>Short Url</td><td>Count</td><td></td></thead>"); 
+          for(var i = 1; i < jsonObj.length; i++)
+          {
+            console.log("Printing Inner Loop Data inertion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
+              var tData="<tr><td scope=\"row\">"+i+"</td>";
+	          tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
+	          tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+	          tData+="<td>"+jsonObj[i].count+"</td>";
+	          tData+="<td><button type=\"button\" class=\"btn\" id=\"invalidate\" name=\"invalidate\" value=\""+jsonObj[i]._id+"\" onclick=\"deletion(this)\">Remove</button></td></tr>";
+            $("#t2").append(tData);
+
+            tData= "<option value=\""+jsonObj[i].shortUrl+"\">"+jsonObj[i].shortUrl+"</option>";
+            $("#s1").append(tData); 
+
+          }
+          //******************Deletion Requiring Multiple Check Boxes********************************
+          //var lastLine="<tr><td></td><td></td><td></td><td><button id=\"invalidate\" onclick=\"myFunction()\">Invalidate</button></td></tr>"
+                    //$("#t2").append(lastLine)
+                  }
+
+        });
+      }
+
+        function deletion(elem) {
+          console.log(elem.value);
+          var data = {id: elem.value,
+                        userID: $('#userID').val()};
+                   // userID=userID};
+          $.ajax({
+              type: "POST",
+          url: "http://localhost:30000/deletion",
+          data: data,
+          success:  ( res )=> {
+            var jsonObj = JSON.parse(res);
+
+                        $("#s1").empty();
+                      $("#s1").append("<option value=\"\">All</option>"); 
+
+            $("#t2 tr").remove();
+            //$("#t2").append("<thead><td>Main Url</td><td>Short Url</td><td>Count</td><td></td></thead>"); 
+            for(var i = 0; i < jsonObj.length; i++)
+            {
+              console.log("Printing Inner Loop Data Deletion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
+              var tData="<tr><td scope=\"row\">"+(i+1)+"</td>";
+              tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
+              tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+              tData+="<td>"+jsonObj[i].count+"</td>";
+              tData+="<td><button type=\"button\" class=\"btn\" id=\"invalidate\" name=\"invalidate\" value=\""+jsonObj[i]._id+"\" onclick=\"deletion(this)\">Remove</button></td></tr>";
+              //console.log(tData);
+              $("#t2").append(tData); 
+
+              tData= "<option value=\""+jsonObj[i].shortUrl+"\">"+jsonObj[i].shortUrl+"</option>";
+              $("#s1").append(tData); 
+            }
+          }
+            });
+        }
+
+        function graphFunction(elem){
+          //var data = {id: "all"};
+          console.log($('#s1').val());
+          var data = {id: $('#s1').val()};
+          $.ajax({
+            type: "POST",
+          url: "http://localhost:30000/graph",
+          data: data,
+          success:  ( res )=> {
+            $('#result').html(res);
+            //$( "#result" ).text(res);
+            alert(res);
+            console.log(res);
+          }
+          });
+        }
+</script>
+
+
+</head>
+<body>
+  
+  <nav class="navbar navbar-static-top navbar-expand-lg navbar-inverse">
+      <div class="container">
+        <a class="pull-left navbar-brand d-inline-flex p-2" href="#">
+          <img src="url-shorteners.png" alt="URL Shortener">
+        </a>
+        <div id="navbar3" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" id="userID">a1</a></li>
+            
+            <li><a href="#">Change Password</a></li>
+            <li><a href="#">Sign out</a></li>
+          </ul>
+        </div>
+        <!--/.nav-collapse -->
+      </div>
+      <!--/.container-fluid -->
+    </nav>
+
+  <div class="container-fluid text-center" style="padding-top: -5px">
+    <div class="row content">
+    <div class="col-sm-1">    </div>
+    <div class="container col-sm-10 text-left">
+      <div class="alert alert-info jumbotron jumbotron-fluid" role="alert" style="height: 260px">
+        <h1 class="display-3 fixed-top">SIMPLIFY YOUR URL</h1>
+        <div class="mb-0" style="padding-top: 25px">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Enter your URL here" style="height: 50px" id="longUrl">
+            <input id="userID" type="text" name="userID" hidden>
+            <span class="input-group-btn">
+              <button class="btn btn-lg btn-primary btn-success" type="button" style="height: 50px; width: 190px" id="send" onclick="insertURL()">
+                <b>SHORTEN URL</b>
+              </button>
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-1">    </div>
+  </div>
+  </div>
+
+  <div class="container-fluid text-center" style="padding-top: 1%">
+    <div class="row content">
+      <div class="col-sm-1">    </div>
+
+      <div class="container col-sm-10">
+        <table class="table table-hover table-responsive urlTab" >
+          <thead class="thead-dark" style="background-color:black; color: white; height: 30px; font-size: 150%; text-align: center;">
+            <tr>
+              <th scope="col" style="width: 5%; text-align: center;">#</th>
+              <th scope="col" style="width: 40%; text-align: center;">Long URL</th>
+              <th scope="col" style="width: 35%; text-align: center;">Short URL</th>
+              <th scope="col" style="width: 10%; text-align: center;">Count</th>
+              <th scope="col" style="width: 10%; text-align: center;"></th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 115%" id="t2">
+           <!--  <tr>
+              <td scope="row">1</th>
+              <td>Markfvsrgggdgdggtdtdtdgssssssssssssgrvrvgdtgs vsrgtgteggsegttbergrg effwafrwartrtytthhbsth</td>
+              <td>kjnjsknhsnhjbfhrb</td>
+              <td>2</td>
+              <td><button type="button" class="btn">Remove</button></td>
+            </tr> -->
+          </tbody>
+        </table>
+         
+        <select id="s1">
+          <option value="">All</option>
+        </select>
+         <button id="graph" onclick="graphFunction(this)">Graph</button>
+
+         <h4 id="result"></h4> 
+         
+
+        <div class="">
+          <img src="" alt="">
+        </div>
+      </div>
+
+      <div class="col-sm-1">    </div>
+    </div>
+  </div>
+  
+</body>
+</html>

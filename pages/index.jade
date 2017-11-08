@@ -1,0 +1,340 @@
+doctype html(lang='en')
+head
+    title URL Shortener
+       
+    meta(charset='utf-8')
+       
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+       
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+       
+    link(href='https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.css', rel='stylesheet', type='text/css')
+       
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+       
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
+       
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.min.js')
+       
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js')
+       
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.18/c3.min.js')
+       
+    script(type='text/javascript', src='https://www.gstatic.com/charts/loader.js')
+       
+    style(media='screen').
+      .urlTab {
+      table-layout:fixed;
+      width: 100%;
+      text-align: center;
+      }
+      .urlTab td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-wrap:break-word;
+      }
+      .navbar-brand {
+      padding: 0px;
+      }
+      .navbar-brand>img {
+      height: 100%;
+      display:contents;
+      width: auto;
+      }
+      .navbar {
+      background-color: black;
+      border: none
+      }
+      #navbar3 {
+      color: #FDFCFC;
+      font-size: 20px
+      }
+       
+    script.
+      var primaryUrl="http://localhost:30000";
+      google.charts.load('current', {'packages':['corechart']});
+      $( document ).ready(function() {
+      $('#userID').val("#{id}");
+      displayTableonLoad();
+      //google.charts.setOnLoadCallback(function(){drawChart(2)});
+      });
+      function toggleURLbox(surl) {
+      $("#longUrl").val(surl);
+      $("#send").html('GENERATE NEW URL');
+      $("#shortenbtn").css('height', '50px').css('width', '215px')
+      }
+      function drawChart(dt, elem) {
+      var max = 0;
+      $('#charts').html('');
+      //var jsonObj = JSON.parse(dt);
+      console.log(dt);
+      var dataArr = [['Date', 'Number of clicks']];
+      for (var i = 0; i < dt.length; i++) {
+      var t = dt[i].total;
+      var d = dt[i]._id;
+      if(t > max) {
+      max = t;
+      }
+      var arr = [d, t];
+      dataArr.push(arr);
+      }
+      //var s1 = $('#s1').val();
+      document.getElementById('ModalTitle').innerHTML = '';
+      document.getElementById('ModalTitle').innerHTML = elem;
+      //$('#ModalTitle').val(s1);
+      //console.log(dataArr);
+      //google.charts.setOnLoadCallback(drawChart);
+      var data = google.visualization.arrayToDataTable(dataArr);
+      var options = {
+      title: 'Clicks per day',
+      //curveType: 'function',
+      width:575,
+      height:300,
+      legend: { position: 'bottom' },
+      'is3D':true,
+      vAxis: { minValue: 0, maxValue: max+5},
+      pointSize: 10,
+      };
+      var chart = new google.visualization.LineChart(document.getElementById('charts'));
+      chart.draw(data, options);
+      }
+      function displayTableonLoad(){
+      var data = {userID: $('#userID').val()};
+      $.ajax({
+      type: "POST",
+      url:primaryUrl+"/displayTableonLoad",
+      data: data,
+      success:  ( res )=> {
+      var jsonObj = JSON.parse(res);
+      $("#s1").empty();
+      $("#s1").append("<option value=\"OverAll\">All</option>");
+      $("#t2 tr").remove();
+      //$("#t2").append("<thead><td>Main Url</td><td>Short Url</td><td>Count</td><td></td></thead>");
+      for(var i = 0; i < jsonObj.length; i++)
+      {
+      console.log("Printing Inner Loop Data Deletion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
+      var tData="<tr><td scope=\"row\">"+(i+1)+"</td>";
+      tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td>"+jsonObj[i].count+"</td>";
+      tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
+      if(jsonObj[i].count==0)
+      tData+="disabled>Show Graph</button>";
+      else
+      tData+=">Show Graph</button>";
+      tData+="&nbsp;&nbsp;&nbsp; <button type=\"button\" class=\"btn\" id=\"invalidate\" name=\"invalidate\" value=\""+jsonObj[i]._id+"\" onclick=\"deletion(this)\">Remove</button></td></tr>";
+      //console.log(tData);
+      $("#t2").append(tData);
+      tData= "<option value=\""+jsonObj[i].shortUrl+"\">"+jsonObj[i].shortUrl+"</option>";
+      $("#s1").append(tData);
+      }
+      }
+      });
+      }
+      function insertURL(){
+      //alert($('#userID').val());
+      //alert($("#send").html())
+      if(($("#send").html()).trim() == 'SHORTEN URL' && $("#longUrl").val() != '') {
+      var data = {longUrl: $('#longUrl').val(),
+      userID: $('#userID').val()};
+      //  userID=userID};
+      console.log("Sending: "+data.longUrl+":"+data.userID);
+      $.ajax({
+      type: "POST",
+      url: primaryUrl+"/urlCaller",
+      data: data,
+      success:  ( res )=> {
+      //$( "#result" ).text( JSON.stringify(res) )
+      //console.log(res);
+      var jsonObj = JSON.parse(res);
+      console.log("Printing Data::"+jsonObj[0].mainUrl+" :"+jsonObj[0].shortUrl+" :");
+      toggleURLbox(primaryUrl+"/"+jsonObj[0].shortUrl);
+      // $("#t1 tr").remove();
+      // $("#t1").append(tData);
+      $("#s1").empty();
+      $("#s1").append("<option value=\"OverAll\">All</option>");
+      $("#t2 tr").remove();
+      //$("#t2").append("<thead><td>Main Url</td><td>Short Url</td><td>Count</td><td></td></thead>");
+      for(var i = 1; i < jsonObj.length; i++)
+      {
+      console.log("Printing Inner Loop Data inertion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
+      var tData="<tr><td scope=\"row\">"+i+"</td>";
+      tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td>"+jsonObj[i].count+"</td>";
+      tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
+      if(jsonObj[i].count==0)
+      tData+="disabled>Show Graph</button>";
+      else
+      tData+=">Show Graph</button>";
+      tData+="&nbsp;&nbsp;&nbsp; <button type=\"button\" class=\"btn\" id=\"invalidate\" name=\"invalidate\" value=\""+jsonObj[i]._id+"\" onclick=\"deletion(this)\">Remove</button></td></tr>";
+      $("#t2").append(tData);
+      tData= "<option value=\""+jsonObj[i].shortUrl+"\">"+jsonObj[i].shortUrl+"</option>";
+      $("#s1").append(tData);
+      }
+      //******************Deletion Requiring Multiple Check Boxes********************************
+      //var lastLine="<tr><td></td><td></td><td></td><td><button id=\"invalidate\" onclick=\"myFunction()\">Invalidate</button></td></tr>"
+      //$("#t2").append(lastLine)
+      }
+      });
+      }
+      else if (($("#send").html()).trim() == 'GENERATE NEW URL') {
+      $("#longUrl").val('');
+      $("#shortenbtn").css('height', '50px').css('width', '190px')
+      $("#send").html('SHORTEN URL');
+      }
+      }
+      function deletion(elem) {
+      console.log(elem.value);
+      var data = {id: elem.value,
+      userID: $('#userID').val()};
+      // userID=userID};
+      $.ajax({
+      type: "POST",
+      url: primaryUrl+"/deletion",
+      data: data,
+      success:  ( res )=> {
+      var jsonObj = JSON.parse(res);
+      $("#s1").empty();
+      $("#s1").append("<option value=\"OverAll\">All</option>");
+      $("#t2 tr").remove();
+      //$("#t2").append("<thead><td>Main Url</td><td>Short Url</td><td>Count</td><td></td></thead>");
+      for(var i = 0; i < jsonObj.length; i++)
+      {
+      console.log("Printing Inner Loop Data Deletion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
+      var tData="<tr><td scope=\"row\">"+(i+1)+"</td>";
+      tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td>"+jsonObj[i].count+"</td>";
+      tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
+      if(jsonObj[i].count==0)
+      tData+="disabled>Show Graph</button>";
+      else
+      tData+=">Show Graph</button>";
+      tData+="&nbsp;&nbsp;&nbsp; <button type=\"button\" class=\"btn\" id=\"invalidate\" name=\"invalidate\" value=\""+jsonObj[i]._id+"\" onclick=\"deletion(this)\">Remove</button></td></tr>";
+      $("#t2").append(tData);
+      tData= "<option value=\""+jsonObj[i].shortUrl+"\">"+jsonObj[i].shortUrl+"</option>";
+      $("#s1").append(tData);
+      }
+      }
+      });
+      }
+      function graphFunction(elem){
+      //var data = {id: "all"};
+      //console.log(elem);
+      //console.log($('#s1').val());
+      //var data = {id: $('#s1').val()};
+      var data = {urlId: elem,userID: $('#userID').val()};
+      $.ajax({
+      type: "POST",
+      url: primaryUrl+"/graph",
+      data: data,
+      success:  ( res )=> {
+      //$('#result').html(res);
+      //alert(res);
+      //console.log(res);
+      //alert(res.length);
+        if(res.length==0){
+             $('#charts').html('');
+             $('#charts').html('No Data Found');
+
+        }else
+        {
+          google.charts.setOnLoadCallback(function(){drawChart(res, elem)});
+        }
+      }
+      });
+      }
+      function signout(){
+      alert('Do Visit Again.........');
+      document.myform.submit();
+      }
+  body
+    nav.navbar.navbar-static-top.navbar-expand-lg.navbar-inverse
+      .container
+        a.pull-left.navbar-brand.d-inline-flex.p-2(href='#')
+          img(src='url-shorteners.png', alt='URL Shortener')
+                 
+        #navbar3.navbar-collapse.collapse
+          ul.nav.navbar-nav.navbar-right
+            li
+              a Hello
+                         
+            li
+              a#userID(href='#') #{id}
+                         
+            li
+              a(href='#', onclick='signout()') Sign out
+                         
+            li
+        // /.nav-collapse
+      // /.container-fluid
+      form(action='/logout', method='POST', name='myform')
+       
+    .container-fluid.text-center(style='padding-top: -5px')
+      .row.content
+        .col-lg-1     
+             
+        .container.col-lg-10.text-left
+          .alert.alert-info.jumbotron.jumbotron-fluid(role='alert', style='height: 260px')
+            h1.display-3.fixed-top SIMPLIFY YOUR URL
+                     
+            .mb-0(style='padding-top: 25px')
+              .input-group
+                input#longUrl.form-control(type='text', placeholder='Enter your URL here', style='height: 50px')
+                             
+                input#userID(type='text', name='userID', hidden='')
+                             
+                span.input-group-btn
+                  button#shortenbtn.btn.btn-lg.btn-primary.btn-success(type='button', style='height: 50px; width: 190px', onclick='insertURL()')
+                    b#send SHORTEN URL
+             
+        .col-lg-1     
+       
+    .container-fluid.text-center(style='padding-top: 1%')
+      .row.content
+        .col-lg-1     
+               
+        .container.col-lg-10
+          table.table.table-hover.table-responsive.urlTab
+            thead.thead-dark(style='background-color: black; color: white; height: 30px; font-size: 150%; text-align: center;')
+              tr
+                th(scope='col', style='width: 5%; text-align: center;') #
+                               
+                th(scope='col', style='width: 35%; text-align: center;') Long URL
+                               
+                th(scope='col', style='width: 30%; text-align: center;') Short URL
+                               
+                th(scope='col', style='width: 10%; text-align: center;') Count
+                               
+                th(scope='col', style='width: 20%; text-align: center;')
+                  button#OverallGraph.btn.btn-danger(type='button', data-toggle='modal', data-target='#exampleModalLong', value='OverAll', onclick='graphFunction(this.value)') Graph
+                  &nbsp;&nbsp;
+                  button#refreshTab.btn.btn-success(type='button', value='All', onclick='displayTableonLoad()') Refresh
+                       
+            tbody#t2(style='font-size: 115%')
+          div(hidden='')
+            select#s1
+              option(value='OverAll') All
+            button#graph.btn.btn-primary(type='button', data-toggle='modal', data-target='#exampleModalLong', onclick='graphFunction(this)')
+               Show Graph
+          // Modal
+          #exampleModalLong.modal.fade(tabindex='-1', role='dialog', aria-labelledby='exampleModalLongTitle', aria-hidden='true')
+            .modal-dialog(role='document')
+              .modal-content
+                .modal-header
+                  h1#ModalTitle.modal-title(style='color: #004d00')
+                  //
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                       
+                .modal-body
+                  #charts(style='width: 100%; display: inline; margin: auto; float: none')
+                       
+                .modal-footer
+                  button.btn.btn-secondary(type='button', data-dismiss='modal') Close
+                  // <button type="button" class="btn btn-primary">Save changes</button>
+               
+        .col-lg-1     
