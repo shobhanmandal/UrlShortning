@@ -53,8 +53,8 @@ head
        
     script.
       var port=#{port};
-      var address=#{url};
-      var primaryUrl=url+port;
+      var address="#{url}";
+      var primaryUrl=address+port;
 
       google.charts.load('current', {'packages':['corechart']});
       $( document ).ready(function() {
