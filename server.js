@@ -108,7 +108,7 @@ app.post('/register', (req, res) => {
          req.session.user_id = req.body.username;
          result=req.session;
          console.log(app.get('port'));
-         res.render('index',{id:req.body.username,port:app.get('port')});
+         res.render('index',{id:req.body.username,url:url});
 
        }
       db.close();
