@@ -39,7 +39,7 @@ if(req.session.user_id)
  {
  	req.session.user_id = req.session.user_id;
     result=req.session;
-    res.render('index',{id:req.body.username,url:url});
+    res.render('index',{id:req.body.username});
  }
  else
   res.sendFile(__dirname + '/pages/login.html')
