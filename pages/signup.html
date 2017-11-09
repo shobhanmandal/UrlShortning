@@ -204,24 +204,25 @@
 
                             </div>
                             <div class="form-bottom">
-			                    <form role="form" action="/register" method="post" class="login-form">
-			                    	<div class="form-group">
-			                    		<label class="sr-only" for="username">Username</label>
-			                        	<input type="text" name="username" placeholder="Username..." class="form-username form-control" id="username" required="true">
-			                        </div>
-			                        <div class="form-group">
-			                        	<label class="sr-only" for="password">Password</label>
-			                        	<input type="password" name="password" placeholder="Password..." class="form-password form-control" id="password" required="true">
-			                        </div>
-                              <div class="form-group">
-			                        	<label class="sr-only" for="form_password">Confirm Password</label>
-			                        	<input type="password" name="form_password" placeholder="Confirm Password..." class="form-password form-control" id="form_password" required="true">
-			                        </div>
-			                        <button type="submit" class="btn btn-primary" onclick="registered()">Sign up!</button>
-                              <div class="btn" style="margin-top: 2%; color: red" >
-                                <u><a href="http://localhost:30000/">Already registered? Sign in here</a></u>
-                              </div>
-			                    </form>
+    			                    <form role="form" action="/register" method="post" class="login-form">
+    			                    	<div class="form-group">
+    			                    		<label class="sr-only" for="username">Username</label>
+    			                        	<input type="text" name="username" placeholder="Username..." class="form-username form-control" id="username" required="true">
+    			                        </div>
+    			                        <div class="form-group">
+    			                        	<label class="sr-only" for="password">Password</label>
+    			                        	<input type="password" name="password" placeholder="Password..." class="form-password form-control" id="password" required="true">
+    			                        </div>
+                                  <div class="form-group">
+    			                        	<label class="sr-only" for="form_password">Confirm Password</label>
+    			                        	<input type="password" name="form_password" placeholder="Confirm Password..." class="form-password form-control" id="form_password" required="true">
+    			                        </div>
+    			                        <button type="submit" class="btn btn-primary" onclick="registered()">Sign up!</button>
+                              </form>
+                              <form role="form" action="/" method="get" class="login-form">
+                                  <button type="submit" class="btn btn-primary" style="margin-top: 2%; color: black"><u>Already registered? Sign in here</u></button>
+                              </form>
+			                    
 		                    </div>
                         </div>
                     </div>
