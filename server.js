@@ -35,6 +35,13 @@ const database_URL="mongodb://urlshortner:urlshortner@ds149535.mlab.com:49535/ur
 })*/
 //----- Sanjoy's login module start-------------------
 app.get('/', (req, res) => {
+if(req.session.user_id)
+ {
+ 	req.session.user_id = req.session.user_id;
+    result=req.session;
+    res.render('index',{id:req.session.user_id});
+ }
+ else
   res.sendFile(__dirname + '/pages/login.html')
 })
 
@@ -99,20 +106,30 @@ app.post('/register', (req, res) => {
 
        var insertResult,sendingResult;
 
-     db.collection("loginDetails").insertOne(registerVariable,(err, result)=>{
-       if (err) {
-         res.status(400).send(err);
-         console.log(err);
-       }else{
-         console.log("Registered");
-         req.session.user_id = req.body.username;
-         result=req.session;
-         console.log(app.get('port'));
-         res.render('index',{id:req.body.username,url:url});
+            db.collection("loginDetails").findOne({username: req.body.username}, function(err1, doc) {
+    		    if(doc)
+    		    {
+    		    	db.close();
+    		        res.sendFile(__dirname + '/pages/errorSignup.html')
+    		    }
+    		    else
+    		    {
+             db.collection("loginDetails").insertOne(registerVariable,(err, result)=>{
+               if (err) {
+                 res.status(400).send(err);
+                 console.log(err);
+               }else{
+                 console.log("Registered");
+                 req.session.user_id = req.body.username;
+                 result=req.session;
+                 console.log(app.get('port'));
+                 res.render('index',{id:req.body.username,url:url});
 
+           }
+          db.close();
+         });
        }
-      db.close();
-     });
+    	 });
    });
  });
 //----- Sanjoy's login module end-------------------
@@ -177,18 +194,13 @@ app.post('/urlCaller', (req, res) => {
   console.log(req.body)
 
   //var computedShortURL=getID();
-  var computedShortURL=makeid();
+ 
    //console.log("final Text="+computedShortURL);
   var date = new Date();
   var month=date.getMonth()+1;
   var today = date.getDate()+'/'+month+'/'+date.getFullYear();
 
-  var urlVariable = {
-    mainUrl: req.body.longUrl,
-    shortUrl: computedShortURL,
-    count: 0,
-    userId: req.body.userID,
- };
+  
 
   MongoClient.connect(database_URL, (err, db) => {
 	  if (err) {
@@ -198,31 +210,55 @@ app.post('/urlCaller', (req, res) => {
       
       var insertResult,sendingResult;
 
-	  db.collection("urlDetails").insertOne(urlVariable,(err, result)=>{
-	  	if (err) {
-	      res.status(400).send(err);
-	      console.log(err);
-	    }else{
-	    	insertResult=JSON.stringify(result.ops);
-	    	 console.log("The result after querying-------->>>");
+  var temp;
+      while(true)
+	  {
+      	  	text=makeid();
+      	  	db.collection("urlDetails").findOne({shortUrl: text}, function(err1, doc) {
+      		    if(doc)
+      		        temp=doc.value;
+      		    else
+      		    {
+      		    	console.log("final Text="+text);
+                      var urlVariable = {
+      				    mainUrl: req.body.longUrl,
+      				    shortUrl: text,
+      				    count: 0,
+      				    userId: req.body.userID,
+      				 };
+      	  db.collection("urlDetails").insertOne(urlVariable,(err, result)=>{
+      	  	if (err) {
+      	      res.status(400).send(err);
+      	      console.log(err);
+      	    }else{
+      	    	insertResult=JSON.stringify(result.ops);
+      	    	 console.log("The result after querying-------->>>");
 	 
 
-  			db.collection("urlDetails").find({userId: req.body.userID}).toArray(function(err1, result1) {
-			    if (err1) throw err1;
-			    // console.log(result1);
-			   // db.close();
-			   sendingResult=JSON.stringify(result1);
-			   console.log("Json being send-------->>>");
-			   sendingResult=insertResult.substring(0,insertResult.length-1)+","+sendingResult.substring(1,sendingResult.length);
-			   console.log(sendingResult);
-			   res.send(sendingResult);
-			  });
-	    }
+        			db.collection("urlDetails").find({userId: req.body.userID}).toArray(function(err1, result1) {
+      			    if (err1) throw err1;
+      			    // console.log(result1);
+      			   // db.close();
+      			   sendingResult=JSON.stringify(result1);
+      			   console.log("Json being send-------->>>");
+      			   sendingResult=insertResult.substring(0,insertResult.length-1)+","+sendingResult.substring(1,sendingResult.length);
+      			   console.log(sendingResult);
+      			   res.send(sendingResult);
+      			  });
+      	    }
         
 	  	// console.log(sendingResult);
     //   	res.send(sendingResult);	
 	  	db.close();
 	  });
+}
+});
+         if(temp==null)
+         {
+           break; 
+         }
+
+	  }
 
 	});
 });
