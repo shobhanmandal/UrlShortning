@@ -118,7 +118,7 @@ head
       console.log("Printing Inner Loop Data Deletion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
       var tData="<tr><td scope=\"row\">"+(i+1)+"</td>";
       tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
-      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+primaryUrl+"/"+jsonObj[i].shortUrl+"</a></td>";
       tData+="<td>"+jsonObj[i].count+"</td>";
       tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
       if(jsonObj[i].count==0)
@@ -163,7 +163,7 @@ head
       console.log("Printing Inner Loop Data inertion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
       var tData="<tr><td scope=\"row\">"+i+"</td>";
       tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
-      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+primaryUrl+"/"+jsonObj[i].shortUrl+"</a></td>";
       tData+="<td>"+jsonObj[i].count+"</td>";
       tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
       if(jsonObj[i].count==0)
@@ -207,7 +207,7 @@ head
       console.log("Printing Inner Loop Data Deletion::"+jsonObj[i].shortUrl+" :"+jsonObj[i]._id+" :");
       var tData="<tr><td scope=\"row\">"+(i+1)+"</td>";
       tData+="<td><a href=\""+jsonObj[i].mainUrl+"\" target=\"_blank\">"+jsonObj[i].mainUrl+"</a></td>";
-      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+jsonObj[i].shortUrl+"</a></td>";
+      tData+="<td><a href=\""+jsonObj[i].shortUrl+"\" target=\"_blank\">"+primaryUrl+"/"+jsonObj[i].shortUrl+"</a></td>";
       tData+="<td>"+jsonObj[i].count+"</td>";
       tData+="<td><button type=\"button\" class=\"btn btn-primary\" id=\"showGraph\" name=\""+jsonObj[i].shortUrl+"\" value=\""+jsonObj[i]._id+"\" data-toggle=\"modal\" data-target=\"#exampleModalLong\" onclick=\"graphFunction(this.name)\"";
       if(jsonObj[i].count==0)
@@ -249,7 +249,7 @@ head
       });
       }
       function signout(){
-      alert('Do Visit Again.........');
+      //alert('Do Visit Again.........');
       document.myform.submit();
       }
   body
