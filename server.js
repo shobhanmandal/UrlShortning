@@ -274,8 +274,8 @@ app.post('/graph', function(req,res){
 
       var sendingResult;
       if((req.body.urlId).localeCompare('OverAll')==0){
-      		// db.collection("countDetails").aggregate([{ $group: {_id: { "odate": "$odate", "date":"$date"} ,total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
-      			db.collection("countDetails").aggregate([{ $match: {userId: req.body.userID } },{ $group: {_id: "$date" ,total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
+      		db.collection("countDetails").aggregate([{ $match: {userId: req.body.userID } },{ $group: {_id: { "odate": "$odate", "date":"$date"} ,total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
+      		//	db.collection("countDetails").aggregate([{ $match: {userId: req.body.userID } },{ $group: {_id: "$date" ,total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
 	  	    console.log('##################');
 	  	    console.log(docs);
 	  		//sendingResult=JSON.stringify(docs);
@@ -288,8 +288,8 @@ app.post('/graph', function(req,res){
       }
       else
       {
-      		// db.collection("countDetails").aggregate([{ $match: { shortUrl: req.body.id } },{ $group: {_id: { "odate": "$odate", "date":"$date"},total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
-      			db.collection("countDetails").aggregate([{ $match: { shortUrl: req.body.urlId, userId: req.body.userID } },{ $group: {_id: "$date",total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
+      		db.collection("countDetails").aggregate([{ $match: { shortUrl: req.body.urlId, userId: req.body.userID } },{ $group: {_id: { "odate": "$odate", "date":"$date"},total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
+      		//	db.collection("countDetails").aggregate([{ $match: { shortUrl: req.body.urlId, userId: req.body.userID } },{ $group: {_id: "$date",total: { $sum: "$count" }} },{ $sort: { _id: 1 }}]).toArray(function(err, docs){
 	  	    console.log('##################');
 	  	    console.log(docs);
 	  		sendingResult=JSON.stringify(docs);
