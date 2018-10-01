@@ -6,9 +6,18 @@
     "node": "6.11.1"
   },
   "main": "index.js",
+   "devDependencies": {
+    "nodemon": "^1.12.1",
+    "request": "^2.81.0",
+    "tape": "^4.7.0"
+  },
   "scripts": {
     "start": "node index.js",
     "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heroku/node-js-getting-started"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
@@ -18,15 +27,7 @@
     "jade": "^1.11.0",
     "mongodb": "^2.2.33"
   },
-  "devDependencies": {
-    "nodemon": "^1.12.1",
-    "request": "^2.81.0",
-    "tape": "^4.7.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
+  
   "keywords": [
     "node",
     "heroku",
