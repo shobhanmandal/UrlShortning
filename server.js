@@ -349,6 +349,7 @@ app.post('/deletion', function(req, res){
 //---------------This is for displaying the links on initial load
 app.post('/displayTableonLoad', function(req, res){
 	console.log(req.body.userID);
+	console.log("prints the table status on load");
 
 	MongoClient.connect(database_URL, (err, db) => {
 	  if (err) {
