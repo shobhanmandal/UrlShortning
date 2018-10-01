@@ -1,4 +1,4 @@
-console.log('Yes!!! The node is up and running.')
+console.log('Yes!!! The node is up and it is running.')
 
 const express = require('express');
 const bodyParser= require('body-parser');
