@@ -25,6 +25,7 @@ app.use(express.static(__dirname + '/images/'));
 app.listen(app.get('port'), function() {
   console.log('listening on')
   console.log(app.get('port'))
+  console.log('yay!!! my code is working.')
 })
 
 
