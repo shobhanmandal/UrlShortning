@@ -30,8 +30,8 @@ app.listen(app.get('port'), function() {
 
 
 //const database_URL="mongodb://localhost:27017/URL_Shortning_Database"; 
-//const database_URL="mongodb://urlshortner:urlshortner@ds149535.mlab.com:49535/url_shortning_database"; 
-const database_URL="mongodb+srv://urlshortner:urlshortner@url-shortning-database.k778o.mongodb.net/url_shortning_database?retryWrites=true&w=majority";
+const database_URL="mongodb://urlshortner:urlshortner@ds149535.mlab.com:49535/url_shortning_database"; 
+//const database_URL="mongodb+srv://urlshortner:urlshortner@url-shortning-database.k778o.mongodb.net/url_shortning_database?retryWrites=true&w=majority";
 /*app.get('/', function(req, res) {
   res.send('Hello World')
 })*/
