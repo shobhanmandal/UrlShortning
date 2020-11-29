@@ -7,7 +7,7 @@ const app = express();
 const mongodb = require('mongodb');
 const session = require('express-session');
 //const url="https://tranquil-bastion-40055.herokuapp.com";
-const url="https://url-shortening.herokuapp.com/";
+const url="https://url-shortening1.herokuapp.com/";
 // handles URL encoded bodies
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(session({
